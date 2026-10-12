@@ -1,29 +1,29 @@
-name: Daily Activity Bot
+name: Daily Auto Commit
 
 on:
   schedule:
-    # Запуск в 12:27 UTC (17:27 по Екатеринбургу) — некруглое время реже задерживается
+    # Запуск каждый день в 12:27 UTC
     - cron: '27 12 * * *'
-  push:
-    branches:
-      - main # Скрипт проверит работу при каждом вашем пуше
   workflow_dispatch:
 
 jobs:
-  make-commit:
+  commit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Update activity file
-      run: |
-        echo "Last update: $(date)" >> activity.txt
+      - name: Update activity file
+        run: |
+          echo "Последнее обновление: $(date)" >> activity.txt
 
-    - name: Commit and Push changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add activity.txt
-        git commit -m "chore: daily activity update [skip ci]" || echo "No changes to commit"
-        git push
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add activity.txt
+          git commit -m "chore: daily activity update [skip ci]" || echo "No changes to commit"
+          git push
